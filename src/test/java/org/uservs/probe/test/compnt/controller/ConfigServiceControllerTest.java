@@ -42,8 +42,6 @@ class ConfigServiceControllerTest {
                     .webAppContextSetup(webApplicationContext)
                     .build();
         }
-
-        mockRestServiceServer = MockRestServiceServer.createServer(restTemplate);
     }
 
     @AfterEach
@@ -52,6 +50,7 @@ class ConfigServiceControllerTest {
 
     @Test
     void listTest() throws Exception {
+        MockRestServiceServer mockRestServiceServer = MockRestServiceServer.createServer(restTemplate);
         mockRestServiceServer
                 .expect(requestTo("http://db_service/config"))
                 .andExpect(method(HttpMethod.GET))
@@ -78,6 +77,35 @@ class ConfigServiceControllerTest {
         mockRestServiceServer.verify();
     }
 
+    @Test
+    void getTest() throws Exception {
+        MockRestServiceServer mockRestServiceServer = MockRestServiceServer.createServer(restTemplate);
+        mockRestServiceServer
+                .expect(requestTo("http://db_service/config?id=1"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(
+                        withSuccess(new ResourceFile("config_01.json")
+                                        .readAsString(),
+                                MediaType.APPLICATION_JSON));
+
+        MvcResult mvcResult =
+                mvc.perform(
+                        MockMvcRequestBuilders.get("/config/get?id=1")
+                                .header("Connection", "close")
+                                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(200, status);
+        var response = mvcResult.getResponse().getContentAsString();
+        log.debug("response: " + response);
+        JSONAssert.assertEquals(
+                new ResourceFile("config_result_01.json")
+                        .readAsString(),
+                response,
+                JSONCompareMode.STRICT);
+
+        mockRestServiceServer.verify();
+    }
+
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
@@ -85,6 +113,4 @@ class ConfigServiceControllerTest {
 
     @Autowired
     private RestTemplate restTemplate;
-
-    private MockRestServiceServer mockRestServiceServer;
 }

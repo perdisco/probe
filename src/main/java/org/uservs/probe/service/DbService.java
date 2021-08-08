@@ -16,7 +16,7 @@ public class DbService {
 
     public Config configGetById(Integer id){
         return restTemplate.getForEntity(
-                "http://db_service/config/" + id,
+                "http://db_service/config?id=" + id,
                 Config.class).getBody();
     }
 
