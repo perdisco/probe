@@ -1,0 +1,20 @@
+{
+  "status": 0,
+  "configs": [
+    {
+      "id": 1,
+      "name": "config 1",
+      "probes": [
+        {
+          "@type": "SocketProbe",
+          "id": 1,
+          "port": 9999
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "config 2"
+    }
+  ]
+}
