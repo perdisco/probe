@@ -9,6 +9,8 @@ import java.util.List;
 @Service
 public class Sniffer {
     public Integer start(Integer id) {
+        var config = configService.configGetById(id);
+        initializeProbes(config.getProbes());
         return 0;
     }
 

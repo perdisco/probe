@@ -42,6 +42,8 @@ class ConfigServiceControllerTest {
                     .webAppContextSetup(webApplicationContext)
                     .build();
         }
+
+        mockRestServiceServer = MockRestServiceServer.createServer(restTemplate);
     }
 
     @AfterEach
@@ -50,12 +52,19 @@ class ConfigServiceControllerTest {
 
     @Test
     void listTest() throws Exception {
+        mockRestServiceServer
+                .expect(requestTo("http://db_service/config"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(
+                        withSuccess(new ResourceFile("config_list_01.json")
+                                        .readAsString(),
+                        MediaType.APPLICATION_JSON));
+
         MvcResult mvcResult =
                 mvc.perform(
                         MockMvcRequestBuilders.get("/config/list")
                                 .header("Connection", "close")
-                                .accept(MediaType.APPLICATION_JSON_VALUE) )
-                        .andReturn();
+                                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
         var response = mvcResult.getResponse().getContentAsString();
@@ -65,6 +74,8 @@ class ConfigServiceControllerTest {
                         .readAsString(),
                 response,
                 JSONCompareMode.STRICT);
+
+        mockRestServiceServer.verify();
     }
 
     @Autowired

@@ -13,14 +13,16 @@ import java.util.Objects;
 public class ResourceFile {
     String name;
 
-    public String readAsString() throws IOException {
-        var file = new File(
-                Objects.requireNonNull(
-                        getClass().getClassLoader().getResource(name) )
-                        .getFile() );
-        return new String(
-                Files.readAllBytes(
-                        Paths.get(
-                                file.getPath() ) ) ) ;
+    // TODO: recode. return should have status.
+    public String readAsString() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(Objects.requireNonNull(classLoader.getResource(name)).getFile());
+
+        try {
+            return new String(Files.readAllBytes(Paths.get(file.getPath())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
