@@ -14,7 +14,14 @@
     },
     {
       "id": 2,
-      "name": "config 2"
+      "name": "config 1",
+      "probes": [
+        {
+          "@type": "SocketProbe",
+          "id": 2,
+          "port": 9999
+        }
+      ]
     }
   ]
 }

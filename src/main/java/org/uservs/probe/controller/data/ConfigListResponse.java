@@ -1,9 +1,10 @@
 package org.uservs.probe.controller.data;
 
-import io.vavr.collection.List;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.uservs.probe.data.Config;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor

@@ -1,6 +1,5 @@
 package org.uservs.probe.service;
 
-import io.vavr.collection.List;
 import io.vavr.control.Option;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +10,7 @@ import org.uservs.probe.data.Config;
 import org.uservs.probe.repo.IConfigRepo;
 import org.uservs.probe.repo.IProbeRepo;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,10 +26,10 @@ public class ConfigService {
     }
 
     public List<Config> configList(){
-        return List.ofAll( configRepo.findAll() )
+        return io.vavr.collection.List.ofAll( configRepo.findAll() )
                 .toStream()
                 .map( Config::of )
-                .toList();
+                .toJavaList();
     }
 
     public Config configGetById(Integer id){

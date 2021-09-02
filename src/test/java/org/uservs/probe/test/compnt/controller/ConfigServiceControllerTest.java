@@ -52,16 +52,7 @@ class ConfigServiceControllerTest {
 
     @Test
     void newTest() throws Exception {
-        MvcResult mvcResult =
-                mvc.perform(
-                        MockMvcRequestBuilders.post("/config/new")
-                                .content(new ResourceFile("config_new_01.json").readAsString())
-                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                .header("Connection", "close")
-                                .accept(MediaType.APPLICATION_JSON_VALUE))
-                        .andReturn();
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
+        var mvcResult = newRequest();
         var response = mvcResult.getResponse().getContentAsString();
         log.debug("response: " + response);
         JSONAssert.assertEquals(
@@ -73,7 +64,8 @@ class ConfigServiceControllerTest {
 
     @Test
     void listTest() throws Exception {
-        newTest();
+        newRequest();
+        newRequest();
 
         MvcResult mvcResult =
                 mvc.perform(
@@ -93,7 +85,7 @@ class ConfigServiceControllerTest {
 
     @Test
     void getTest() throws Exception {
-        newTest();
+        newRequest();
 
         MvcResult mvcResult =
                 mvc.perform(
@@ -109,6 +101,20 @@ class ConfigServiceControllerTest {
                         .readAsString(),
                 response,
                 JSONCompareMode.STRICT);
+    }
+
+    MvcResult newRequest() throws Exception {
+        var mvcResult =  mvc.perform(
+                    MockMvcRequestBuilders.post("/config/new")
+                            .content(new ResourceFile("config_new_01.json").readAsString())
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Connection", "close")
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(200, status);
+
+        return mvcResult;
     }
 
     @Autowired

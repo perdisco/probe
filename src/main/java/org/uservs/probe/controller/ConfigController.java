@@ -2,7 +2,6 @@ package org.uservs.probe.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.vavr.collection.List;
 import io.vavr.jackson.datatype.VavrModule;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.DecoderException;
@@ -21,6 +20,7 @@ import org.uservs.probe.service.ConfigService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
