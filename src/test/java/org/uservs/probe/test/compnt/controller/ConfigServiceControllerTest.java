@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -32,6 +33,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Probe.class)
 @WebAppConfiguration
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Log4j2
 class ConfigServiceControllerTest {
 
@@ -49,15 +51,29 @@ class ConfigServiceControllerTest {
     }
 
     @Test
+    void newTest() throws Exception {
+        MvcResult mvcResult =
+                mvc.perform(
+                        MockMvcRequestBuilders.post("/config/new")
+                                .content(new ResourceFile("config_new_01.json").readAsString())
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .header("Connection", "close")
+                                .accept(MediaType.APPLICATION_JSON_VALUE))
+                        .andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(200, status);
+        var response = mvcResult.getResponse().getContentAsString();
+        log.debug("response: " + response);
+        JSONAssert.assertEquals(
+                new ResourceFile("config_new_result_01.json")
+                        .readAsString(),
+                response,
+                JSONCompareMode.STRICT);
+    }
+
+    @Test
     void listTest() throws Exception {
-        MockRestServiceServer mockRestServiceServer = MockRestServiceServer.createServer(restTemplate);
-        mockRestServiceServer
-                .expect(requestTo("http://db_service/config"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(
-                        withSuccess(new ResourceFile("config_list_01.json")
-                                        .readAsString(),
-                        MediaType.APPLICATION_JSON));
+        newTest();
 
         MvcResult mvcResult =
                 mvc.perform(
@@ -73,20 +89,11 @@ class ConfigServiceControllerTest {
                         .readAsString(),
                 response,
                 JSONCompareMode.STRICT);
-
-        mockRestServiceServer.verify();
     }
 
     @Test
     void getTest() throws Exception {
-        MockRestServiceServer mockRestServiceServer = MockRestServiceServer.createServer(restTemplate);
-        mockRestServiceServer
-                .expect(requestTo("http://db_service/config?id=1"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(
-                        withSuccess(new ResourceFile("config_01.json")
-                                        .readAsString(),
-                                MediaType.APPLICATION_JSON));
+        newTest();
 
         MvcResult mvcResult =
                 mvc.perform(
@@ -98,12 +105,10 @@ class ConfigServiceControllerTest {
         var response = mvcResult.getResponse().getContentAsString();
         log.debug("response: " + response);
         JSONAssert.assertEquals(
-                new ResourceFile("config_result_01.json")
+                new ResourceFile("config_get_result_01.json")
                         .readAsString(),
                 response,
                 JSONCompareMode.STRICT);
-
-        mockRestServiceServer.verify();
     }
 
     @Autowired

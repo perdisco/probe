@@ -1,0 +1,9 @@
+{
+  "name": "config 1",
+  "probes": [
+    {
+      "@type": "SocketProbe",
+      "port": 9999
+    }
+  ]
+}

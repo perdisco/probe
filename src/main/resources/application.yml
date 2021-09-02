@@ -1,6 +1,15 @@
 spring:
   profiles: default
-#  rabbitmq:
+  jpa:
+    hibernate:
+      ddl-auto: create
+  datasource:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:mem:testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  #  rabbitmq:
 #    host: localhost
 #    username: guest
 #    password: guest
